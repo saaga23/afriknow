@@ -49,7 +49,7 @@ The dataset contains:
 ## Setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/afriknow.git
+git clone https://github.com/saaga23/afriknow.git
 cd afriknow
 pip install -r requirements.txt
 ```
