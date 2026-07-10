@@ -1,0 +1,25 @@
+{
+  "cff-version": "1.2.0",
+  "message": "If you use this software, please cite it using these metadata.",
+  "title": "AfriKnow: A Source-Aware Calibration Audit of Seven Language Models",
+  "authors": [
+    {
+      "family-names": "Abraham",
+      "given-names": "Sunday Aspita",
+      "email": "sunday.aspita@example.com",
+      "affiliation": "Bowen University"
+    }
+  ],
+  "keywords": [
+    "calibration",
+    "llm",
+    "africa",
+    "europe",
+    "geographic-bias",
+    "mmlu",
+    "openrouter",
+    "nlp"
+  ],
+  "license": "MIT",
+  "url": "https://github.com/YOUR_USERNAME/afriknow"
+}
