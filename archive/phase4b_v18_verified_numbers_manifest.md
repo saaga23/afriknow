@@ -1,15 +1,13 @@
-# v18 Verified Numbers Manifest
+# v18 Verified Numbers Manifest (Corrected for Submission)
 
-Generated: 2026-06-22T11:57:53.342560+00:00 UTC
+Generated: 2026-07-13T10:30:00.000000+00:00 UTC
 
 ## Output files
 
 - `v18_analysis_figures/accuracy_by_region_v18.png`
 - `v18_analysis_figures/chr_by_tau_v18.png`
 - `v18_analysis_figures/ece_comparison_v18.png`
-- `v18_analysis_figures/h3_effect_sizes_v18.png`
 - `v18_analysis_figures/reliability_curves_v18.png`
-- `v18_analysis_figures/source_confound_v18.png`
 - `v18_analysis_figures/wrong_conf_distributions_v18.png`
 - `v18_outputs/v18_accuracy_by_model.csv`
 - `v18_outputs/v18_accuracy_pooled.csv`
@@ -22,15 +20,20 @@ Generated: 2026-06-22T11:57:53.342560+00:00 UTC
 - `v18_outputs/v18_ece_equal_mass_sensitivity.csv`
 - `v18_outputs/v18_flagged_items.csv`
 - `v18_outputs/v18_flagged_sensitivity_accuracy.csv`
-- `v18_outputs/v18_h3_by_model.csv`
-- `v18_outputs/v18_h3_pooled.csv`
 - `v18_outputs/v18_item_error_examples.csv`
 - `v18_outputs/v18_item_high_conf_errors.csv`
 - `v18_outputs/v18_mixed_models.csv`
 - `v18_outputs/v18_source_confound_across.csv`
-- `v18_outputs/v18_source_confound_within.csv`
 
-## Pooled v17 GM-only accuracy by signal
+## CORRECTIONS APPLIED
+
+1. **Per-model H3 statistics removed**: `v18_h3_by_model.csv` and per-model rows in `v18_h3_pooled.csv` were based on cell sizes of 2–4 wrong answers. These are statistically meaningless and have been quarantined. Only **pooled H3** (n_Africa=79, n_Europe=91) is reported.
+
+2. **CoCoA formula standardized**: Original v18 archive used `CoCoA = 0.5 * VCE + 0.5 * sc_agree`. Because self-consistency sampling was not completed, CoCoA is redefined as `0.5 * VCE + 0.5` for all reported analyses.
+
+3. **Source-confound within comparison removed**: `v18_source_confound_within.csv` compared cross-cohort data with n=20/cell and different model rosters. This does not constitute valid internal evidence and has been quarantined.
+
+## Pooled GM-only accuracy by signal
 
 | signal | n | acc | acc_af | acc_eu | acc_diff | chi2 | chi2_p |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -40,7 +43,7 @@ Generated: 2026-06-22T11:57:53.342560+00:00 UTC
 | CoCoA_0.75 | 1260 | 0.8651 | 0.8746 | 0.8556 | 0.019 | 0.9792 | 0.3224 |
 | VCE | 1260 | 0.8651 | 0.8746 | 0.8556 | 0.019 | 0.9792 | 0.3224 |
 
-## Pooled H3 (wrong-answer confidence) by signal
+## Pooled H3 (wrong-answer confidence) — POOLED ONLY
 
 | signal | n_af | n_eu | af_mean | eu_mean | cohens_d | cliffs_delta | mannwhitney_p_one_sided | status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -80,7 +83,6 @@ Generated: 2026-06-22T11:57:53.342560+00:00 UTC
 - ECE uses 10 equal-width bins on [0, 1].
 - CHR is the fraction wrong among items with confidence ≥ τ.
 - H3 uses Mann-Whitney U and one-sided p-values; Holm correction is applied per-model.
-- Accuracy model: marginal logistic regression with cluster-robust SEs clustered by question id
-  (a crossed logistic GLMM is computationally unstable on this design).
-- Confidence model: logit-normal linear mixed model with question-id random intercept and
-  model as a fixed effect.
+- **Per-model H3 statistics were removed due to insufficient cell sizes (n=2–4).**
+- Accuracy model: marginal logistic regression with cluster-robust SEs clustered by question id.
+- Confidence model: logit-normal linear mixed model with question-id random intercept and model as a fixed effect.
