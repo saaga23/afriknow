@@ -39,8 +39,8 @@ afriknow/
 ## Data
 
 The dataset is available on Kaggle:
-- **Dataset:** https://www.kaggle.com/datasets/abrahamsunday123/afriknow-v18-inputs
-- **Notebook:** https://www.kaggle.com/code/abrahamsunday123/afriknow-phase-4b-v18-post-hoc-analysis
+- **Dataset:** https://www.kaggle.com/datasets/afriknow-v18-inputs
+- **Notebook:** https://www.kaggle.com/code/afriknow-phase-4b-v18-post-hoc-analysis
 
 The dataset contains:
 - `03_openrouter_outputs_v18_correct.csv` — 180 items × 7 models, greedy + VCE rows
@@ -83,7 +83,7 @@ python scripts/full_817_analysis.py
 ```bibtex
 @article{abraham2026afriknow,
   title={AfriKnow: A Source-Aware Calibration Audit of Seven Language Models},
-  author={Abraham, Sunday Aspita},
+  author={Anonymous},
   journal={arXiv preprint arXiv:XXXX.XXXXX},
   year={2026},
   note={COLING 2027 submission}
@@ -93,8 +93,3 @@ python scripts/full_817_analysis.py
 ## License
 
 MIT License
-
-## Contact
-
-Sunday Aspita Abraham — [sunday.aspita@example.com](mailto:sunday.aspita@example.com)  
-Bowen University, Ibadan, Nigeria

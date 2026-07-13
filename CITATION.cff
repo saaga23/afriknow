@@ -4,10 +4,8 @@
   "title": "AfriKnow: A Source-Aware Calibration Audit of Seven Language Models",
   "authors": [
     {
-      "family-names": "Abraham",
-      "given-names": "Sunday Aspita",
-      "email": "sunday.aspita@example.com",
-      "affiliation": "Bowen University"
+      "family-names": "Anonymous",
+      "given-names": "Anonymous"
     }
   ],
   "keywords": [
@@ -20,6 +18,5 @@
     "openrouter",
     "nlp"
   ],
-  "license": "MIT",
-  "url": "https://github.com/saaga23/afriknow"
+  "license": "MIT"
 }
