@@ -36,6 +36,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from schema import validate_df, REQUIRED_COLUMNS
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "annotator_pipeline" / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -236,6 +238,8 @@ def main():
         log(f"{nick}: {len(rows)} rows in {dt:.1f}s")
 
     df = pd.DataFrame(all_rows)
+    df = df[REQUIRED_COLUMNS]
+    validate_df(df)
     df.to_csv(OUT_DIR / "03_modal_outputs.csv", index=False)
     log(f"Saved 03_modal_outputs.csv ({len(df)} rows)")
 
