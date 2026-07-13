@@ -1,0 +1,10 @@
+{
+  "seed": 42,
+  "n_total": 180,
+  "n_africa": 90,
+  "n_europe": 90,
+  "gm_only_core": true,
+  "description": "Maximum available GM-only matched-source subset from Global-MMLU. 90 Africa + 90 Europe, matched by (category, difficulty, cultural-sensitivity). This is the largest feasible GM-only sample.",
+  "source_sha256": "placeholder",
+  "items": []
+}
