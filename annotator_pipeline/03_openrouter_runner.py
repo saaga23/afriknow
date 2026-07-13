@@ -32,6 +32,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from schema import validate_df, REQUIRED_COLUMNS
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "annotator_pipeline" / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -339,6 +341,8 @@ def main():
                 isolated.add(nick); log(f"Model {nick} isolated.")
 
     df = pd.DataFrame(results)
+    df = df[REQUIRED_COLUMNS]
+    validate_df(df)
     df.to_csv(OUT_DIR / "03_openrouter_outputs.csv", index=False)
     log(f"Saved 03_openrouter_outputs.csv ({len(df)} rows)")
 

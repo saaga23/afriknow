@@ -29,6 +29,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from schema import validate_df, REQUIRED_COLUMNS
+
 ROOT = Path(__file__).resolve().parent
 OUT_DIR = ROOT / "outputs"
 PILOT_ITEMS = OUT_DIR / "02_pilot_50_items.json"
@@ -277,6 +279,8 @@ def run_openrouter_pilot(items):
         log(f"[OR] {nick}: completed {len(items)} items")
 
     df = pd.DataFrame(all_rows)
+    df = df[REQUIRED_COLUMNS]
+    validate_df(df)
     df.to_csv(OUT_DIR / "pilot_or_outputs.csv", index=False)
     log(f"Saved pilot_or_outputs.csv ({len(df)} rows)")
 
