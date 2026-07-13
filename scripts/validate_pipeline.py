@@ -28,6 +28,8 @@ def check_formula():
     for pyfile in glob.glob(str(ROOT / "**/*.py"), recursive=True):
         if "node_modules" in pyfile or "__pycache__" in pyfile:
             continue
+        if Path(pyfile).name == "validate_pipeline.py":
+            continue
         with open(pyfile, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
         for i, line in enumerate(content.split("\n"), 1):
