@@ -27,6 +27,9 @@ REQUIRED_COLUMNS = [
     "provider",
 ]
 
+OPTIONAL_COLUMNS = [
+]
+
 PURPOSE_VALUES = {"greedy", "vce"}
 MODEL_CLASS_VALUES = {"closed", "open"}
 PURPOSE_NULLABLE = {"vce", "greedy"}
@@ -35,7 +38,7 @@ PURPOSE_NULLABLE = {"vce", "greedy"}
 def validate_df(df):
     """Validate that a DataFrame matches the canonical schema."""
     missing = set(REQUIRED_COLUMNS) - set(df.columns)
-    extra = set(df.columns) - set(REQUIRED_COLUMNS)
+    extra = set(df.columns) - set(REQUIRED_COLUMNS + OPTIONAL_COLUMNS)
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
     if extra:

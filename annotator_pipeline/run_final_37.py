@@ -77,7 +77,7 @@ def sha256(path: Path) -> str:
 def log(msg: str) -> None:
     print(f"[final-37] {msg}", flush=True)
 
-env_path = ROOT / ".env"
+env_path = ROOT.parent / ".env"
 if env_path.exists():
     for line in env_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
@@ -301,7 +301,9 @@ def main():
                         "model_class": MODEL_CLASS.get(nick, "unknown"),
                         "correct_letter": item.get("answer","A"), "cat": item.get("cat",""),
                         "diff": item.get("diff",""), "source": item.get("source",""),
-                        "input_tokens": 100, "output_tokens": 5, "cost_usd": 0.0,
+                        "input_tokens": cost_tracker.history[-1]["input_tokens"] if cost_tracker.history else 100,
+                        "output_tokens": cost_tracker.history[-1]["output_tokens"] if cost_tracker.history else 5,
+                        "cost_usd": cost_tracker.history[-1]["cost_usd"] if cost_tracker.history else 0.0,
                         "timestamp": datetime.now(timezone.utc).isoformat()
                     }
                     results.append({**base, "purpose":"greedy", "pred":pred,

@@ -74,17 +74,35 @@ Move from "Reject in current form" to "No-brainer accept" for COLING 2027.
 ## Remaining To Do
 
 | Task | Status | Notes |
-|---|---|---|
-| Run full 180-item mixed-source experiment on OpenRouter | In progress | 20-item pilot running in background |
-| Run Modal lane on mixed-source items | Pending | Depends on OpenRouter results |
-| Merge mixed-source results and validate | Pending | After both lanes complete |
+|------|--------|-------|
+| Run full 180-item mixed-source experiment on OpenRouter | **DONE** | 1640/1800 rows; 5 models; cost $0.072 |
+| Run Modal lane on mixed-source items | Pending | Modal unavailable; 3 open models run on OpenRouter instead |
+| Merge mixed-source results and validate | **DONE (OpenRouter lane)** | `scripts/analyze_mixed_180.py`; Modal merge pending |
 | Update paper manuscript with all fixes | Pending | Ethics, power, anonymization, corrections |
 | Rename Kaggle dataset to anonymous handle | Pending | Requires manual Kaggle UI action |
 | Create anonymous GitHub org/user | Pending | Requires manual GitHub action |
 
+## Mixed-Source Full Run Results (180 items, OpenRouter)
+
+Outputs: `annotator_pipeline/outputs/03_openrouter_outputs_mixed_180.csv` (1640 rows; 180 items × 5 models × 2 purposes, minus 160 failed calls ≈ 8.9%).
+
+| Metric | Africa | Europe |
+|--------|--------|--------|
+| Greedy accuracy | 91.6% (n=403) | 90.2% (n=417) |
+| Wrong-answer VCE | 0.781 (n=34) | 0.844 (n=41) |
+
+- **Wrong-answer VCE diff (Africa − Europe) = −0.063, t = −1.24 (ns).** Direction: Africa wrong answers carry *lower* confidence than Europe — i.e., no evidence that the AfriMMLU-sourced Africa items induce systematic overconfidence.
+- **Accuracy parity:** Africa and Europe statistically indistinguishable.
+- **Africa source mix:** 92 AfriMMLU rows (46 items) + 714 Global-MMLU rows — the mixed-source contrast is demonstrated.
+- **Power caveat:** at ~91% accuracy only 34/41 wrong answers accrue per region, far below the n≈180/wrong targeted in `POWER_ANALYSIS.md`. The VCE contrast is therefore underpowered for a strong equivalence claim; treat as directional. To reach n=180 wrong/group would require ~2,000 items/group given observed error rate.
+
+### Scripting changes this session
+- `03_openrouter_runner.py`: added `--input`, `--output`, `--cost-cap` CLI overrides so the mixed-source lane writes to a dedicated, non-destructive CSV (`03_openrouter_outputs_mixed_180.csv`) instead of clobbering the v18 output.
+- `scripts/analyze_mixed_180.py`: new analysis script for the full mixed-source run.
+
 ## Current Repository State
 
-- **GitHub:** https://github.com/saaga23/afriknow
+- **GitHub:** https://github.com/afriknow-anon/afriknow
 - **Latest commit:** `a55de3b` — "Update verified numbers manifest..."
 - **Branch:** `main`
 - **All P0/P1 fixes committed and pushed**

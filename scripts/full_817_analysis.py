@@ -53,6 +53,8 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 FULL_CSV = ROOT / "annotator_pipeline" / "outputs" / "03_openrouter_outputs_full.csv"
 MANIFEST_JSON = ROOT / "annotator_pipeline" / "outputs" / "03_openrouter_manifest_full.json"
 GM_ONLY_JSON = ROOT / "phase2_data" / "afriknow_gm_only_v3.json"
+if not GM_ONLY_JSON.exists():
+    print(f"[warn] GM-only JSON not found at {GM_ONLY_JSON}; some GM-only checks will be skipped.")
 
 FLAGGED_IDS = [
     "GM-AF-high_school_us_history-test-105",

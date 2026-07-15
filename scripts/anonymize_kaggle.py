@@ -18,7 +18,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-KAGGLE_DIR = ROOT / "kaggle_upload"
+KAGGLE_DIR = ROOT.parent / "kaggle_upload"
 ANON_HANDLE = "afriknow-anon"
 
 
@@ -40,7 +40,7 @@ def anonymize_metadata(path: Path) -> None:
 
 
 def anonymize_readme(path: Path) -> None:
-    content = path.read_text(encoding="utf-8")
+    content = path.read_text(encoding="utf-8", errors="replace")
     content = re.sub(r"abrahamsunday123", ANON_HANDLE, content)
     path.write_text(content, encoding="utf-8")
     print(f"Anonymized {path}")

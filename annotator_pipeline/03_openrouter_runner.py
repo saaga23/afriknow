@@ -39,6 +39,8 @@ OUT_DIR = ROOT / "annotator_pipeline" / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SAMPLED_JSON = OUT_DIR / "02_sampled_items.json"
+OUTPUT_CSV = OUT_DIR / "03_openrouter_outputs.csv"
+COST_CAP_USD = 2.0
 
 # All 5 models on OpenRouter for this run (closed + open).
 # The 3 open models are TARGETED for Modal long-term; run here on OpenRouter
@@ -62,7 +64,7 @@ MODEL_CLASS = {
 
 RESERVE_POOL = [
     ("openai/gpt-4.1-nano", "gpt-4.1-nano", 0.0, 256),
-    ("anthropic/claude-haiku-4.5", "claude-haiku-4.5", 0.0, 256),
+
     ("google/gemini-2.5-flash-lite", "gemini-2.5-flash-lite", 0.8, 256),
 ]
 
@@ -82,7 +84,7 @@ PRICE_TABLE = {
     "openai/gpt-4o-mini": {"input": 0.15, "output": 0.60},
     "anthropic/claude-3-haiku": {"input": 0.25, "output": 1.25},
     "openai/gpt-4.1-nano": {"input": 0.10, "output": 0.40},
-    "anthropic/claude-haiku-4.5": {"input": 0.80, "output": 4.00},
+
     "google/gemini-2.5-flash-lite": {"input": 0.10, "output": 0.40},
     "deepseek/deepseek-v3.2": {"input": 0.2288, "output": 0.3432},
     "qwen/qwen3-235b-a22b-2507": {"input": 0.09, "output": 0.10},
@@ -101,7 +103,7 @@ def log(msg: str) -> None:
     print(f"[or-lane] {msg}", flush=True)
 
 # Load .env if present (no dotenv dependency)
-env_path = ROOT / ".env"
+env_path = ROOT.parent / ".env"
 if env_path.exists():
     for line in env_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
@@ -226,11 +228,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--input", default=None, help="Override input items JSON")
+    parser.add_argument("--output", default=None, help="Override output CSV path")
+    parser.add_argument("--cost-cap", type=float, default=None, help="Override cost cap USD")
     args = parser.parse_args()
-    global DRY_RUN
+    global DRY_RUN, cost_tracker
     DRY_RUN = args.dry_run
 
-    with open(SAMPLED_JSON, encoding="utf-8") as f:
+    sampled_json = Path(args.input) if args.input else SAMPLED_JSON
+    output_csv = Path(args.output) if args.output else OUTPUT_CSV
+    cost_cap = args.cost_cap if args.cost_cap is not None else COST_CAP_USD
+    cost_tracker = CostTracker(cost_cap)
+
+    with open(sampled_json, encoding="utf-8") as f:
         items = json.load(f)["items"]
     log(f"Loaded {len(items)} sampled items")
 
@@ -284,8 +294,8 @@ def main():
                 results.append({**base,"purpose":"vce","pred":pred,"correct":int(pred==it.get("answer","A")),
                                 "vce":vce,"sc_agree":None,"cocoa_fixed":0.5 * vce + 0.5,"greedy_text":"dry-run"})
         df = pd.DataFrame(results)
-        df.to_csv(OUT_DIR / "03_openrouter_outputs.csv", index=False)
-        log(f"Saved 03_openrouter_outputs.csv ({len(df)} rows, dry-run)")
+        df.to_csv(output_csv, index=False)
+        log(f"Saved {output_csv.name} ({len(df)} rows, dry-run)")
         return
 
     results = []
@@ -325,9 +335,9 @@ def main():
                 try:
                     vc = chat_complete(model_id, build_vce_prompt(item, results[-1]["pred"]), 0.0, 512, "vce")
                     vce = extract_conf(vc); v_ok = True
-                results.append({**base,"purpose":"vce","pred":results[-1]["pred"],
-                                "correct":int(results[-1]["pred"]==item.get("answer","A")),
-                                "vce":vce,"sc_agree":None,"cocoa_fixed":0.5 * vce + 0.5,"greedy_text":clean_raw_text(vc, "vce")})
+                    results.append({**base,"purpose":"vce","pred":results[-1]["pred"],
+                                    "correct":int(results[-1]["pred"]==item.get("answer","A")),
+                                    "vce":vce,"sc_agree":None,"cocoa_fixed":0.5 * vce + 0.5,"greedy_text":clean_raw_text(vc, "vce")})
                     break
                 except Exception as e:
                     log(f"  {nick} item {idx} VCE attempt {attempt+1}: {e}")
@@ -343,8 +353,8 @@ def main():
     df = pd.DataFrame(results)
     df = df[REQUIRED_COLUMNS]
     validate_df(df)
-    df.to_csv(OUT_DIR / "03_openrouter_outputs.csv", index=False)
-    log(f"Saved 03_openrouter_outputs.csv ({len(df)} rows)")
+    df.to_csv(output_csv, index=False)
+    log(f"Saved {output_csv.name} ({len(df)} rows)")
 
     pd.DataFrame(cost_tracker.history).to_csv(OUT_DIR / "03_openrouter_cost_history.csv", index=False)
     log(f"Saved 03_openrouter_cost_history.csv (${cost_tracker.spent:.4f})")
@@ -354,8 +364,8 @@ def main():
         "script": __file__, "provider": "openrouter", "seed": SEED,
         "models_active": [m[1] for m in active], "models_isolated": list(isolated),
         "n_items": len(items), "n_rows": len(df), "total_cost_usd": round(cost_tracker.spent, 6),
-        "input_hash": sha256(SAMPLED_JSON),
-        "output_hash": sha256(OUT_DIR / "03_openrouter_outputs.csv"),
+        "input_hash": sha256(sampled_json),
+        "output_hash": sha256(output_csv),
         "schema_match_modal": True,
     }
     with open(OUT_DIR / "03_openrouter_manifest.json", "w", encoding="utf-8") as f:

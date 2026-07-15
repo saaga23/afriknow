@@ -13,6 +13,7 @@ venv/
 # Data (large files should be on Kaggle, not Git)
 *.csv
 *.json
+!phase2_data/afriknow_gm_only_v3.json
 !requirements.txt
 
 # Notebooks
@@ -41,3 +42,16 @@ __pycache__
 # Compiled binaries / large downloads
 tools/tectonic.exe
 tools/tectonic.zip
+
+# Project memory (internal state, not for distribution)
+memory.md
+MEMORY.md
+
+# Kaggle temporary artifacts (may contain API keys)
+kaggle_key_dataset_tmp/
+kaggle_dataset_tmp/
+kaggle_kernel_tmp/
+*.zip
+
+# Logs
+*.log

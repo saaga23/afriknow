@@ -22,26 +22,24 @@ Produce a **reviewer-proof, hallucination-resistant** annotator study that:
 | Phase | Script | Purpose | Key output |
 |-------|--------|---------|------------|
 | 01 | `01_power_analysis.py` | Min sample size (power + ICC + conference floors) | `01_power_analysis_report.md` |
-| 02 | `02_sample_design.py` | Stratified 60/60 sample, seed=42, exclude flagged | `02_sampled_items.json` |
-| 03 | `03_model_runner.py` | 5-model evaluation (OpenRouter + Modal) | `03_model_outputs.csv`, `03_cost_history.csv` |
+| 02 | `02_sample_design.py` | Stratified 90/90 sample, seed=42, exclude flagged | `02_sampled_items.json` |
+| 03 | Kaggle kernel / `03_openrouter_runner.py` | 7-model evaluation (OpenRouter API) | `kaggle_8model_outputs.csv`, `kaggle_8model_cost_history.csv` |
 | 04 | `04_annotator_interface.py` | Blinded CSV for human raters | `04_annotator_interface.csv`, `04_blinding_key.json` |
 | 05 | `05_audit_trail.py` | Append-only provenance logger (used by orchestrator) | `05_audit_trail.jsonl` |
-| 06 | `06_annotator_analysis.py` | Annotator-vs-model agreement metrics | `06_annotator_analysis_report.md` |
+| 06 | `analyze_kaggle_7model.py` | 7-model accuracy, calibration, VCE analysis | analysis stdout + paper tables |
 
 ## Run
 
 ```bash
-# Full pipeline (needs OPENROUTER_API_KEY in env for real Phase 3)
-python run_pipeline.py
+# Run analysis on completed Kaggle outputs
+python run_pipeline.py --analysis
 
-# Validate without API calls (synthetic Phase 3 outputs)
-python run_pipeline.py --dry-run
+# Validate outputs
+python -c "from annotator_pipeline.schema import validate_df; import pandas as pd; df = pd.read_csv('annotator_pipeline/outputs/kaggle_8model_outputs.csv'); validate_df(df); print('OK')"
 ```
 
-Phase 3 requires `OPENROUTER_API_KEY` for the closed models (GPT-4o-mini, Claude-3-Haiku).
-The open models (DeepSeek-V3.2, Qwen3-235B, Llama-3.3-70B) are configured to run via
-Modal serverless GPUs in production; the runner falls back to OpenRouter for the same
-model IDs if Modal is not wired, keeping the pipeline single-entry.
+Phase 3 inference is executed on Kaggle (kernel: `abrahamsunday123/afriknow-7model-openrouter-inference-v2`).
+The open models (DeepSeek-V3.2, Qwen3-235B, Llama-3.3-70B) and closed models (GPT-4o-mini, Claude-3-Haiku, GPT-4.1-nano, Gemini-2.5-Flash-Lite) are all accessed via OpenRouter API.
 
 ## Code Trail (anti-hallucination)
 
